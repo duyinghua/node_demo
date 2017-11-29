@@ -28,8 +28,19 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routeCtrl);
-app.use('/projectA', projectA);
+// CROS
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', req.headers.origin);
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', '*');
+    res.header('Access-Control-Allow-Credentials', true);
+    // res.header("Content-Type", "application/json;charset=utf-8");
+    next();
+})
+
+//各个项目的路由组
+routeCtrl(app);
+projectA(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
