@@ -4,10 +4,9 @@ module.exports = {
     main(req, res){
         res.render('index', {title: 'myProjectA'});
     },
-    aaa(req, res){
-        db('select * from user where age>11', function (err, results, fields) {
-            console.log(results)
-            fw.send(res, results);
-        });
+    async aaa(req, res){
+        let results = await db('select * from user where age>12');
+        let result2 = await db('select * from user where id=1');
+        fw.send(res, results.concat(result2));
     }
 };

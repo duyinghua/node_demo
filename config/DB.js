@@ -12,16 +12,27 @@ module.exports = function (sql, options, callback) {
         database: 'my_user',
         port: 3306
     });
-    pool.getConnection(function (err, conn) {
-        if (err) {
-            callback(err, null, null);
-        } else {
-            conn.query(sql, options, function (err, results, fields) {
-                //释放连接
-                conn.release();
-                //事件驱动回调
-                callback(err, results, fields);
-            });
-        }
-    });
+    return new Promise(function (resolve, reject) {
+        pool.getConnection(function (err, conn) {
+            if (err) {
+                reject(err);
+            } else {
+                conn.query(sql, options, function (err, results, fields) {
+                    //释放连接
+                    conn.release();
+                    //事件驱动回调
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(results);
+                    }
+                });
+            }
+        });
+    }).then(function (response) {
+        return response;
+    }, function (response) {
+        console.log(response)
+        return null;
+    })
 };
